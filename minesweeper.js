@@ -62,16 +62,16 @@ document.addEventListener('contextmenu', checkForWin);
   ]
 }*/
 let board = { cells: [] };
-let size = 6;
+let boardSize = 6;
 
 function createBoard () {
-  for (i = 0; i < size; i++) {
-    for (j = 0; j < size; j++) {
+  for (i = 0; i < boardSize; i++) {
+    for (j = 0; j < boardSize; j++) {
       board.cells.push(
         {
           row: i,
           col: j,
-          isMine: Math.random() <= 0.75,
+          isMine: Math.random() <= 0.2,
           hidden: true })
     }
   }
