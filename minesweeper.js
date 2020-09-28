@@ -1,7 +1,9 @@
-document.addEventListener('DOMContentLoaded', startGame)
+document.addEventListener('DOMContentLoaded', startGame);
+document.addEventListener('click', checkForWin);
+document.addEventListener('contextmenu', checkForWin);
 
 // Define your `board` object here!
-var board = {
+/*var board = {
   cells: [
     {
       row: 0,
@@ -58,46 +60,54 @@ var board = {
       hidden: true
     }
   ]
+}*/
+let board = { cells: [] };
+let size = 6;
+
+function createBoard () {
+  for (i = 0; i < size; i++) {
+    for (j = 0; j < size; j++) {
+      board.cells.push(
+        {
+          row: i,
+          col: j,
+          isMine: Math.random() <= 0.75,
+          hidden: true })
+    }
+  }
 }
+
 
 function startGame() {
   // Don't remove this function call: it makes the game work!
+  createBoard();
+  lib.initBoard();
+
   for (cell = 0; cell < board.cells.length; cell++) {
     board.cells[cell]['surroundingMines'] = countSurroundingMines(board.cells[cell])
   }
-
-  document.addEventListener('click', checkForWin)
-  document.addEventListener('contextmenu', checkForWin)
-
-  lib.initBoard()
 }
 
 // Define this function to look for a win condition:
 //
 // 1. Are all of the cells that are NOT mines visible?
-function clearFieldsVisible() {
-  for (i = 0; i < board.cells.length; i++) {
-    if (board.cells[i].isMine && !board.cells[i].hidden) {
-      return false
-    } else {
-      return true
-    }
-  }
-}
 // 2. Are all of the mines marked?
-function minesMarked() {
-  for (i = 0; i < board.cells.length; i++) {
-    if (board.cells[i].isMine && !board.cells[i].isMarked) {
-      return false
-    } else {
-      return true
-    }
-  }
+
+function playSound() {
+  winnerSound = new Audio("Winning-sound-effect.mp3");
+  winnerSound.play();
 }
 
 function checkForWin () {
-      if (clearFieldsVisible() && minesMarked()) {
-      lib.displayMessage('You win!')
+  allMines = board.cells.filter(cell => cell.isMine === true);
+  allClearFields = board.cells.filter(cell => cell.isMine === false);
+  allMarkedMines = allMines.every(cell => cell.isMarked === true);
+  allClearFieldsVisible = allClearFields.every(cell => cell.hidden === false);
+
+  
+      if (allMarkedMines && allClearFieldsVisible) {
+        lib.displayMessage('YOU WIN!')
+        playSound()
   }
   // You can use this function call to declare a winner (once you've
   // detected that they've won, that is!)
